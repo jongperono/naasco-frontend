@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function LoginForm() {
   const [username, setUsername] = useState("");
@@ -20,11 +21,16 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">
-            Title
+            Naasco
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
             Sign in to your account
