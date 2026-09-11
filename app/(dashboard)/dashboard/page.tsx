@@ -1,13 +1,80 @@
+"use client";
+
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 export default function DashboardPage() {
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-zinc-900 dark:border-white"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-          Dashboard
-        </h1>
-        <p className="text-zinc-600 dark:text-zinc-400 mt-2">
-          Welcome to your Naasco dashboard
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+            Dashboard
+          </h1>
+          <p className="text-zinc-600 dark:text-zinc-400 mt-2">
+            Welcome back, {user.firstName} {user.lastName}!
+          </p>
+        </div>
+        <button
+          onClick={logout}
+          className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* User Info Card */}
+      <div className="bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 p-6">
+        <h2 className="text-xl font-semibold text-zinc-900 dark:text-white mb-4">
+          Your Profile
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">Email</p>
+            <p className="text-zinc-900 dark:text-white font-medium">{user.email}</p>
+          </div>
+          <div>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">Role</p>
+            <p className="text-zinc-900 dark:text-white font-medium capitalize">{user.role}</p>
+          </div>
+          {user.phoneNumber && (
+            <div>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">Phone</p>
+              <p className="text-zinc-900 dark:text-white font-medium">{user.phoneNumber}</p>
+            </div>
+          )}
+          <div>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">Status</p>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive
+                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+              }`}>
+              {user.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

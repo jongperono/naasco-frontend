@@ -1,22 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function LoginForm() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login attempted with:", { username, password });
-      setIsLoading(false);
-    }, 1000);
+    const result = await login(email, password);
+
+    if (result.success) {
+      // Redirect to dashboard on success
+      router.push('/dashboard');
+    } else {
+      setError(result.error || 'Login failed');
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -30,7 +42,7 @@ export default function LoginForm() {
         {/* Logo/Brand */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-2">
-            Naasco
+            NAASCO
           </h1>
           <p className="text-zinc-600 dark:text-zinc-400">
             Sign in to your account
@@ -40,22 +52,29 @@ export default function LoginForm() {
         {/* Login Card */}
         <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg border border-zinc-200 dark:border-zinc-800 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username Field */}
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            )}
+
+            {/* Email Field */}
             <div>
               <label
-                htmlFor="username"
+                htmlFor="email"
                 className="block text-sm font-medium text-zinc-900 dark:text-white mb-2"
               >
-                Username
+                Email
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white placeholder-zinc-500 dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
               />
             </div>
 
@@ -191,7 +210,7 @@ export default function LoginForm() {
         <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">
           Don&apos;t have an account?{" "}
           <a
-            href="#"
+            href="/register"
             className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
           >
             Sign up for free

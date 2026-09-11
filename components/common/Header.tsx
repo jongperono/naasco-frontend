@@ -8,7 +8,7 @@ export default function Header() {
       <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
-            Naasco
+            Titlt
           </h1>
         </div>
 
