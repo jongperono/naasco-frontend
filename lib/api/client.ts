@@ -132,6 +132,72 @@ class ApiClient {
     });
   }
 
+  async updateUser(id: number, data: {
+    email?: string;
+    password?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    roleId?: number;
+    isActive?: boolean;
+  }): Promise<ApiResponse<{ user: User }>> {
+    return this.request<{ user: User }>(`/api/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteUser(id: number): Promise<ApiResponse<{ message: string }>> {
+    return this.request<{ message: string }>(`/api/users/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Member endpoints (mirrors user endpoints but uses /api/members)
+  async getAllMembers(): Promise<ApiResponse<{ members: User[]; total: number }>> {
+    return this.request<{ members: User[]; total: number }>('/api/members');
+  }
+
+  async getMemberById(id: number): Promise<ApiResponse<{ member: User }>> {
+    return this.request<{ member: User }>(`/api/members/${id}`);
+  }
+
+  async createMember(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    roleId?: number;
+    isActive?: boolean;
+  }): Promise<ApiResponse<{ member: User }>> {
+    return this.request<{ member: User }>('/api/members', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateMember(id: number, data: {
+    email?: string;
+    password?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    roleId?: number;
+    isActive?: boolean;
+  }): Promise<ApiResponse<{ member: User }>> {
+    return this.request<{ member: User }>(`/api/members/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteMember(id: number): Promise<ApiResponse<{ message: string }>> {
+    return this.request<{ message: string }>(`/api/members/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Token management
   saveToken(token: string): void {
     if (typeof window !== 'undefined') {

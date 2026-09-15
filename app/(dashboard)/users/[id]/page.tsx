@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { apiClient, User } from "@/lib/api/client";
 import Link from "next/link";
 
-export default function MemberDetailPage({
+export default function UserDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -21,26 +21,25 @@ export default function MemberDetailPage({
     const fetchMember = async () => {
       try {
         setLoading(true);
-        setError(null);
         const memberId = parseInt(id);
 
         if (isNaN(memberId)) {
-          if (!cancelled) setError("Invalid member ID");
+          if (!cancelled) setError("Invalid user ID");
           return;
         }
 
-        const response = await apiClient.getMemberById(memberId);
+        const response = await apiClient.getUserById(memberId);
 
         if (cancelled) return;
 
         if (response.error) {
           setError(response.error);
         } else if (response.data) {
-          setMember(response.data.member);
+          setMember(response.data.user);
         }
       } catch (err) {
         if (!cancelled) {
-          setError("Failed to fetch member details");
+          setError("Failed to fetch user details");
           console.error(err);
         }
       } finally {
@@ -68,7 +67,7 @@ export default function MemberDetailPage({
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Link
-            href="/members"
+            href="/users"
             className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +75,7 @@ export default function MemberDetailPage({
             </svg>
           </Link>
           <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-            Member Details
+            User Details
           </h1>
         </div>
 
@@ -86,9 +85,9 @@ export default function MemberDetailPage({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-red-800 dark:text-red-200 font-semibold">{error || "Member not found"}</p>
+              <p className="text-red-800 dark:text-red-200 font-semibold">{error || "User not found"}</p>
               <p className="text-sm text-red-600 dark:text-red-400 mt-1">
-                The member you're looking for doesn't exist or you don't have permission to view it.
+                The user you're looking for doesn't exist or you don't have permission to view it.
               </p>
             </div>
           </div>
@@ -103,7 +102,7 @@ export default function MemberDetailPage({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
-            href="/members"
+            href="/users"
             className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,7 +111,7 @@ export default function MemberDetailPage({
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
-              Member Details
+              User Details
             </h1>
             <p className="text-zinc-600 dark:text-zinc-400 mt-1">
               Complete information about {member.firstName} {member.lastName}
@@ -120,13 +119,13 @@ export default function MemberDetailPage({
           </div>
         </div>
         <Link
-          href={`/members/${id}/edit`}
+          href={`/users/${id}/edit`}
           className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/50 flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          Edit Member
+          Edit User
         </Link>
       </div>
 
@@ -228,7 +227,7 @@ export default function MemberDetailPage({
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white capitalize">{member.role}</p>
               </div>
               <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-1">Member ID</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-1">User ID</p>
                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">{member.id}</p>
               </div>
             </div>

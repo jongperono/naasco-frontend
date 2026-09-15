@@ -20,12 +20,12 @@ export default function MembersPage() {
   const fetchMembers = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.getAllMembers();
+      const response = await apiClient.getAllUsers();
 
       if (response.error) {
         setError(response.error);
       } else if (response.data) {
-        setMembers(response.data.members);
+        setMembers(response.data.users);
       }
     } catch (err) {
       setError("Failed to fetch members");
@@ -256,7 +256,7 @@ export default function MembersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            href={`/members/${member.id}`}
+                            href={`/users/${member.id}`}
                             className="p-2 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                             title="View Details"
                           >
@@ -266,7 +266,7 @@ export default function MembersPage() {
                             </svg>
                           </Link>
                           <Link
-                            href={`/members/${member.id}/edit`}
+                            href={`/users/${member.id}/edit`}
                             className="p-2 rounded-lg text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                             title="Edit"
                           >
@@ -324,7 +324,7 @@ function AddMemberModal({
     setError(null);
 
     try {
-      const response = await apiClient.createMember(formData);
+      const response = await apiClient.createUser(formData);
 
       if (response.error) {
         setError(response.error);
@@ -462,3 +462,4 @@ function AddMemberModal({
     </div>
   );
 }
+
