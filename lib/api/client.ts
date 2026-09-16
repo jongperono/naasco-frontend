@@ -25,6 +25,47 @@ export interface AuthResponse {
   user: User;
 }
 
+export interface AuditLog {
+  id: number;
+  userId: number | null;
+  action: string;
+  entityType: string;
+  entityId: number | null;
+  oldValues: Record<string, any> | null;
+  newValues: Record<string, any> | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+  userName?: string;
+  userEmail?: string;
+}
+
+export interface AuditLogFilters {
+  page?: number;
+  limit?: number;
+  userId?: number;
+  action?: string;
+  entityType?: string;
+  entityId?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface AuditStats {
+  period: string;
+  totalLogs: number;
+  periodLogs: number;
+  byAction: Array<{ action: string; count: number }>;
+  byEntityType: Array<{ entityType: string; count: number }>;
+  mostActiveUsers: Array<{
+    userId: number;
+    userName: string;
+    userEmail: string;
+    count: number;
+  }>;
+  activityByDay: Array<{ date: string; count: number }>;
+}
+
 class ApiClient {
   private baseUrl: string;
 
@@ -196,6 +237,70 @@ class ApiClient {
     return this.request<{ message: string }>(`/api/members/${id}`, {
       method: 'DELETE',
     });
+  }
+
+  // Audit log endpoints
+  async getAuditLogs(filters?: AuditLogFilters): Promise<ApiResponse<{
+    logs: AuditLog[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }>> {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      });
+    }
+    const queryString = params.toString();
+    return this.request<{
+      logs: AuditLog[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`/api/audit${queryString ? `?${queryString}` : ''}`);
+  }
+
+  async getAuditLogById(id: number): Promise<ApiResponse<{ log: AuditLog }>> {
+    return this.request<{ log: AuditLog }>(`/api/audit/${id}`);
+  }
+
+  async getAuditLogsByEntity(
+    entityType: string,
+    entityId: number
+  ): Promise<ApiResponse<{ logs: AuditLog[]; total: number }>> {
+    return this.request<{ logs: AuditLog[]; total: number }>(
+      `/api/audit/entity/${entityType}/${entityId}`
+    );
+  }
+
+  async getAuditLogsByUser(
+    userId: number
+  ): Promise<ApiResponse<{ logs: AuditLog[]; total: number }>> {
+    return this.request<{ logs: AuditLog[]; total: number }>(
+      `/api/audit/user/${userId}`
+    );
+  }
+
+  async getAuditStats(days?: number): Promise<ApiResponse<AuditStats>> {
+    const queryString = days ? `?days=${days}` : '';
+    return this.request<AuditStats>(`/api/audit/stats${queryString}`);
+  }
+
+  async getAuditActions(): Promise<ApiResponse<{ actions: string[] }>> {
+    return this.request<{ actions: string[] }>('/api/audit/actions');
+  }
+
+  async getAuditEntityTypes(): Promise<ApiResponse<{ entityTypes: string[] }>> {
+    return this.request<{ entityTypes: string[] }>('/api/audit/entity-types');
   }
 
   // Token management

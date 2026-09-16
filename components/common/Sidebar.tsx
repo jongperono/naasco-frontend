@@ -108,7 +108,7 @@ export default function Sidebar() {
     },
     {
       name: "Audit Log",
-      href: "/audit-log",
+      href: "/audit",
       icon: (
         <svg
           className="w-5 h-5"
